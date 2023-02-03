@@ -1,18 +1,18 @@
-enum Role {
+export enum Role {
     ADMIN = "ADMIN",
     NORMAL = "NORMAL"
 };
 
-type TUsers = {
+export interface UserDB {
     id: string,
     name: string,
     email: string,
     password: string,
-    role: Role,
+    role: string,
     created_at: string
 };
 
-type TPosts = {
+export interface PostDB  {
     id: string,
     creator_id: string,
     content: string,
@@ -22,9 +22,15 @@ type TPosts = {
     updated_at: string
 };
 
-type Tlikes_dislikes = {
+export interface Likes_dislikesDB  {
     user_id: string,
     post_id: string,
     like: number
 }
 
+export interface UserDBCreated {
+    name: string,
+    email: string,
+    password: string,
+    created_at: string
+}
