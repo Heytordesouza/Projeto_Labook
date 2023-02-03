@@ -1,10 +1,10 @@
 -- Active: 1675369654899@@127.0.0.1@3306
 CREATE TABLE users (
-    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    id TEXT PRIMARY KEY UNIQUE NULL,
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    role TEXT NOT NULL,
+    role TEXT NULL,
     created_at TEXT DEFAULT (DATETIME()) NOT NULL
 );
 
@@ -15,7 +15,7 @@ CREATE TABLE posts (
     likes INTEGER NOT NULL,
     dislikes INTEGER NOT NULL,
     created_at TEXT DEFAULT (DATETIME()) NOT NULL,
-    update_at TEXT DEFAULT NULL,
+    updated_at TEXT DEFAULT NULL,
     FOREIGN KEY (creator_id) REFERENCES users (id)
 );
 
@@ -49,3 +49,4 @@ VALUES
 SELECT * FROM users;
 SELECT * FROM posts;
 SELECT * FROM likes_dislikes;
+DROP TABLE users;
