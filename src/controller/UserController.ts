@@ -2,63 +2,24 @@ import { Request, Response } from "express"
 import { Users } from "../models/Users"
 import { UserDatabase } from "../database/UserDatabase"
 import { UserDB } from "../types"
+import { UserBusiness } from "../business/UserBusiness"
 
 export class UserController {
 
     createUser = async (req: Request, res: Response) => {
       try {
-        const { name, email, password} = req.body
 
-        const userDBInstance = new UserDatabase()
-  
-  
-        if (name !== undefined) {
-          if (typeof name !== "string") {
-            res.status(400)
-            throw new Error("'name' deve ser string")
-          }
-        }
-  
-        if (email !== undefined) {
-          if (typeof email !== "string") {
-            res.status(400)
-            throw new Error("'email' deve ser string")
-          }
-        }
-  
-        if (password !== undefined) {
-          if (typeof password !== "string") {
-            res.status(400)
-            throw new Error("'password' deve ser string")
-          }
-        }
+        const input = { 
+          name: req.body.name, 
+          email: req.body.email, 
+          password: req.body.password
+        } 
 
-        const lista = ['ADMIN', 'NORMAL']
-        const role = lista[Math.floor(Math.random() * lista.length)]
-
+        const userBusiness = new UserBusiness()
+        const output = await userBusiness.createUser(input)
+        
   
-        //Instanciando a classe User, porém passando os valores vindo das requisições e armazenando na variável userInstance.
-        const userInstance = new Users(
-          Math.floor(Date.now() * Math.random()).toString(3),
-          name,
-          email,
-          password,
-          role,
-          new Date().toISOString()
-        )
-  
-        //Para demonstrar a criação do usuário, precisamos acessar os valores que estão na classe, porém para acessar os valores na classe só será possível através dos métodos.
-        const newUserDB: UserDB = {
-          id: userInstance.getId(),
-          name: userInstance.getName(),
-          email: userInstance.getEmail(),
-          password: userInstance.getPassword(),
-          role: userInstance.getRole(),
-          created_at: userInstance.getCreated_at(),
-        }
-        await userDBInstance.insertUser(userInstance)
-  
-        res.status(201).send({token: "um token jwt"})
+        res.status(201).send({output, token: "um token jwt"})
       } catch (error) {
         console.log(error)
   

@@ -66,3 +66,18 @@ export class Posts{
         this.updated_at = newUpdated_at
     }
 }
+
+
+export class PostContent{
+    constructor(
+        private content:string,
+    ){}
+
+    public getContent(){
+        return this.content
+    }
+
+    public setContent(newContent:string): void{
+        this.content = newContent
+    }
+}
