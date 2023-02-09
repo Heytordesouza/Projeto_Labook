@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import cors from 'cors'
-import { UserController } from './controller/UserController'
+import { userRouter } from './router/userRouter'
+import { postRouter } from './router/postRouter'
 
 const app = express()
 
@@ -11,13 +12,9 @@ app.listen(3003, () => {
     console.log(`Servidor rodando na porta ${3003}`)
 })
 
-//Instanciando a classe UserController e armazenando em uma variável (userController)
-const userController = new UserController()
 
 //ENDPOINT de Criação de Usuário
-app.post("/users/signup", userController.createUser)
+app.use("/users", userRouter)
 
-app.get("/users/signup", userController.getUser)
-
-app.post("/users/login", userController.createUser)
+app.use("/posts", postRouter)
 
