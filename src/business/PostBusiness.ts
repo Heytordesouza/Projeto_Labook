@@ -1,11 +1,18 @@
 import { PostDatabase } from "../database/PostDatabase"
+import { PostDTO } from "../dtos/PostDTO"
 import { PostContent, Posts } from "../models/Posts"
 import { PostDB } from "../types"
 
 export class PostBusiness {
-    public getPost = async () => {
-        const postDatabase = new PostDatabase()
-        const postsDB: PostDB[] = await postDatabase.findPost()
+    constructor(
+        private postDTO: PostDTO,
+        private postDatabase: PostDatabase
+      ){}
+    public getPost = async (input: any) => {
+
+        
+        // const postDatabase = new PostDatabase()
+        const postsDB: PostDB[] = await this.postDatabase.findPost(input)
 
         const posts: Posts[] = postsDB.map((postDB) => 
             new Posts(
@@ -17,7 +24,6 @@ export class PostBusiness {
                 postDB.created_at,
                 postDB.updated_at
             ))
-
         return posts
     }
 

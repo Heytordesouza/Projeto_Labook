@@ -28,13 +28,10 @@ export class UserDatabase extends BaseDatabase {
         }
     }
 
-    async insertUser(parameter: Users): Promise <void> {
-        await this.checkUser(
-            parameter.getId() as string,
-            parameter.getEmail() as string
-        )
-
-        await BaseDatabase.connection(UserDatabase.TABLE_USERS).insert(parameter)
+    async insertUser(newUserDB: UserDB): Promise <void> {
+        await BaseDatabase
+        .connection(UserDatabase.TABLE_USERS)
+        .insert(newUserDB)
     }
 
     async findUser(parameter: string | undefined): Promise <UserDB[]> {
@@ -54,5 +51,13 @@ export class UserDatabase extends BaseDatabase {
         }
     
         return result
+    }
+
+    public async findUserById(id: string) {
+        const [ userDB ]: UserDB[] | undefined[] = await BaseDatabase
+            .connection(UserDatabase.TABLE_USERS)
+            .where({ id })
+
+        return userDB
     }
 }

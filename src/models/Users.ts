@@ -9,7 +9,7 @@ export class Users{
     ){}
 
 
-    public getId(){
+    public getId():string {
         return this.id
     }
 
@@ -17,7 +17,7 @@ export class Users{
         this.id = newId
     }
 
-    public getName(){
+    public getName(): string {
         return this.name
     }
 
@@ -25,7 +25,7 @@ export class Users{
         this.name = newName
     }
 
-    public getEmail(){
+    public getEmail(): string {
         return this.email
     }
 
@@ -33,7 +33,7 @@ export class Users{
         this.email = newEmail
     }
 
-    public getPassword(){
+    public getPassword(): string {
         return this.password
     }
 
@@ -41,7 +41,7 @@ export class Users{
         this.password = newPassword
     }
 
-    public getRole(){
+    public getRole(): string {
         return this.role
     }
 
@@ -49,7 +49,7 @@ export class Users{
         this.role = newRole
     }
 
-    public getCreated_at(){
+    public getCreated_at(): string{
         return this.created_at
     }
 
