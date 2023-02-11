@@ -34,12 +34,23 @@ export class PostDatabase extends BaseDatabase {
         await BaseDatabase.connection(PostDatabase.TABLE_POSTS).insert(parameter)
     }
 
-    async findPost(): Promise <PostDB[]> {
+    async findPost(parameter: string | undefined): Promise <PostDB[]> {
+        let result
     
-        const postsDB: PostDB[] = await BaseDatabase
-        .connection(PostDatabase.TABLE_POSTS)
+        if (parameter) {
+          const postsDB: PostDB[] = await BaseDatabase
+          .connection(PostDatabase.TABLE_POSTS)
+          .where("id", "LIKE", `%${parameter}%`)
     
-        return postsDB
+          result = postsDB
+    
+        } else {
+          const postsDB: PostDB[] = await BaseDatabase
+          .connection(PostDatabase.TABLE_POSTS)
+          result = postsDB
+        }
+    
+        return result
     }
 
     public async updatePost(updatedPostDB: PostDB) {

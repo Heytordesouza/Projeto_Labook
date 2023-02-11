@@ -3,36 +3,38 @@ import { Users } from "../models/Users"
 import { UserDatabase } from "../database/UserDatabase"
 import { UserDB } from "../types"
 import { UserBusiness } from "../business/UserBusiness"
+import { UserDTO } from "../dtos/UserDTO"
+import { BaseError } from "../errors/BaseError"
 
 export class UserController {
+  constructor(
+    private userDTO: UserDTO,
+    private userBusiness: UserBusiness
+){}
 
     createUser = async (req: Request, res: Response) => {
       try {
 
-        const input = { 
-          name: req.body.name, 
-          email: req.body.email, 
-          password: req.body.password
-        } 
+        const input = this.userDTO.createUserInput(
+          req.body.id,
+          req.body.name, 
+          req.body.email, 
+          req.body.password
+        )
 
-        const userBusiness = new UserBusiness()
-        const output = await userBusiness.createUser(input)
+        const output = await this.userBusiness.createUser(input)
         
   
         res.status(201).send({output, token: "um token jwt"})
       } catch (error) {
         console.log(error)
-  
-        if (req.statusCode === 200) {
-          res.status(500)
-        }
-  
-        if (error instanceof Error) {
-          res.send(error.message)
+
+        if (error instanceof BaseError) {
+            res.status(error.statusCode).send(error.message)
         } else {
-          res.send("Erro inesperado")
+            res.status(500).send("Erro inesperado")
         }
-      }
+    }
     }
 
     getUser = async (req: Request, res: Response) => {
@@ -56,81 +58,35 @@ export class UserController {
           res.status(200).send(users)
         } catch (error) {
           console.log(error)
-    
-          if (req.statusCode === 200) {
-            res.status(500)
-          }
-    
-          if (error instanceof Error) {
-            res.send(error.message)
+
+          if (error instanceof BaseError) {
+              res.status(error.statusCode).send(error.message)
           } else {
-            res.send("Erro inesperado")
+              res.status(500).send("Erro inesperado")
           }
-        }
+      }
     }
 
     loginUser = async (req: Request, res: Response) => {
         try {
-          const {email, password} = req.body
-  
-          const userDBInstance = new UserDatabase()
-    
-          if (email !== undefined) {
-            if (typeof email !== "string") {
-              res.status(400)
-              throw new Error("'email' deve ser string")
-            }
-          }
-    
-          if (password !== undefined) {
-            if (typeof password !== "string") {
-              res.status(400)
-              throw new Error("'password' deve ser string")
-            }
-          }
-  
-          const lista = ['ADMIN', 'NORMAL']
-          const role = lista[Math.floor(Math.random() * lista.length)]
-
-          const nomes = ['Fulano', 'Sicrano']
-          const name = nomes[Math.floor(Math.random() * nomes.length)]
-  
-    
-          //Instanciando a classe User, porém passando os valores vindo das requisições e armazenando na variável userInstance.
-          const userInstance = new Users(
-            Math.floor(Date.now() * Math.random()).toString(3),
-            name,
-            email,
-            password,
-            role,
-            new Date().toISOString()
+          const input = this.userDTO.loginUserInput(
+            req.body.id,
+            req.body.email, 
+            req.body.password
           )
+  
+          const output = await this.userBusiness.loginUser(input)
     
-          //Para demonstrar a criação do usuário, precisamos acessar os valores que estão na classe, porém para acessar os valores na classe só será possível através dos métodos.
-          const newUserDB: UserDB = {
-            id: userInstance.getId(),
-            name: userInstance.getName(),
-            email: userInstance.getEmail(),
-            password: userInstance.getPassword(),
-            role: userInstance.getRole(),
-            created_at: userInstance.getCreated_at(),
-          }
-          await userDBInstance.insertUser(userInstance)
-    
-          res.status(200).send({token: "um token jwt"})
+          res.status(201).send({output, token: "um token jwt"})
         } catch (error) {
           console.log(error)
-    
-          if (req.statusCode === 200) {
-            res.status(500)
-          }
-    
-          if (error instanceof Error) {
-            res.send(error.message)
+
+          if (error instanceof BaseError) {
+              res.status(error.statusCode).send(error.message)
           } else {
-            res.send("Erro inesperado")
+              res.status(500).send("Erro inesperado")
           }
-        }
+      }
       }
 }
 
