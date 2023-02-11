@@ -24,7 +24,6 @@ export class UserController {
 
         const output = await this.userBusiness.createUser(input)
         
-  
         res.status(201).send({output, token: "um token jwt"})
       } catch (error) {
         console.log(error)
@@ -34,7 +33,7 @@ export class UserController {
         } else {
             res.status(500).send("Erro inesperado")
         }
-    }
+      }
     }
 
     getUser = async (req: Request, res: Response) => {
@@ -64,7 +63,7 @@ export class UserController {
           } else {
               res.status(500).send("Erro inesperado")
           }
-      }
+        }
     }
 
     loginUser = async (req: Request, res: Response) => {
@@ -86,7 +85,7 @@ export class UserController {
           } else {
               res.status(500).send("Erro inesperado")
           }
-      }
+        }
       }
 }
 

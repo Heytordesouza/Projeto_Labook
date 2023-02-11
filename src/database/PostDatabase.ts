@@ -5,20 +5,7 @@ import { PostDB } from "../types"
 export class PostDatabase extends BaseDatabase {
     static TABLE_POSTS = "posts"
 
-    private async checkPost(id: string | undefined): Promise <void> {
-    
-        if (id) {
-            const [PostsDB]: PostDB[] = await BaseDatabase
-            .connection(PostDatabase.TABLE_POSTS)
-            .where({ id: id })
-    
-            if (PostsDB) {
-            throw new Error("'id' já cadastrado.")
-            }
-        }
-    }
-
-    public async findProductById(id: string) {
+    public async findPostById(id: string) {
         const [ postDB ]: PostDB[] | undefined[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .where({ id })
@@ -26,12 +13,10 @@ export class PostDatabase extends BaseDatabase {
         return postDB
     }
 
-    async insertPost(parameter: Posts): Promise <void> {
-        await this.checkPost(
-            parameter.getId() as string,
-        )
-
-        await BaseDatabase.connection(PostDatabase.TABLE_POSTS).insert(parameter)
+    async insertPost(newPostDB: PostDB): Promise <void> {
+        await BaseDatabase
+        .connection(PostDatabase.TABLE_POSTS)
+        .insert(newPostDB)
     }
 
     async findPost(parameter: string | undefined): Promise <PostDB[]> {

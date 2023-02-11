@@ -12,7 +12,11 @@ export class UserBusiness {
 
     public createUser = async (input: any) => {
 
-        const {id, name, email, password} = input
+        const {
+          id, 
+          name, 
+          email, 
+          password} = input
 
         const lista = ['ADMIN', 'NORMAL']
         const role = lista[Math.floor(Math.random() * lista.length)]
@@ -47,7 +51,10 @@ export class UserBusiness {
 
     public loginUser = async (input: any) => {
 
-      const {id, email, password} = input
+      const {
+        id, 
+        email, 
+        password} = input
 
       const loginDBExists = await this.userDatabase.findUserById(id)
 
