@@ -1,6 +1,7 @@
 import { PostDatabase } from "../database/PostDatabase"
 import { PostDTO } from "../dtos/PostDTO"
-import { PostContent, Posts } from "../models/Posts"
+import { NotFoundError } from "../errors/NotFoundError"
+import { Posts } from "../models/Posts"
 import { PostDB } from "../types"
 
 export class PostBusiness {
@@ -31,18 +32,8 @@ export class PostBusiness {
 
         const {content} = input
 
-        const postDBInstance = new PostDatabase()
-
-
-        if (content !== undefined) {
-        if (typeof content !== "string") {
-            throw new Error("'content' deve ser string")
-        }
-        }
-
         const lista = ['u001', 'u002', 'u003']
         const creator_id = lista[Math.floor(Math.random() * lista.length)]
-
 
         //Instanciando a classe User, porém passando os valores vindo das requisições e armazenando na variável userInstance.
         const postInstance = new Posts(
@@ -66,11 +57,9 @@ export class PostBusiness {
         updated_at: postInstance.getUpdated_at()
         }
 
-        await postDBInstance.insertPost(postInstance)
+        await this.postDatabase.insertPost(newPostDB)
 
-        const output = {
-            token: "um token jwt"
-        }
+        const output = this.postDTO.createPostOutput(postInstance)
 
         return(output)
     }
@@ -83,18 +72,10 @@ export class PostBusiness {
             newContent
         } = input
 
-
-        if (newContent !== undefined) {
-            if (typeof newContent !== "string") {
-                throw new Error("'Content' deve ser string")
-            }
-        }
-        
-        const postDatabase = new PostDatabase()
-        const postToEditDB = await postDatabase.findProductById(idToEdit)
+        const postToEditDB = await this.postDatabase.findPostById(idToEdit)
 
         if (!postToEditDB) {
-            throw new Error("'id' para editar não existe")
+            throw new NotFoundError("'id' para editar não existe")
         }
 
         const post = new Posts(
@@ -109,6 +90,7 @@ export class PostBusiness {
 
         // newId && post.setId(newId)
         newContent && post.setContent(newContent)
+        post.setUpdated_at(new Date().toISOString())
         
         const updatedPostDB: PostDB = {
             id: post.getId(),
@@ -120,16 +102,9 @@ export class PostBusiness {
             updated_at: post.getUpdated_at()
         }
 
-        
+        await this.postDatabase.updatePost(updatedPostDB)
 
-        await postDatabase.updatePost(updatedPostDB)
-
-        const output = {
-            message: "Produto editado com sucesso",
-            post: updatedPostDB
-        }
-
-        // const output = this.productDTO.editProductOutput(product)
+        const output = this.postDTO.editPostOutput(post)
 
         return output
     }
@@ -138,14 +113,13 @@ export class PostBusiness {
     public deletePost = async (input: any) => {
         const { idToDelete } = input
 
-        const postDatabase = new PostDatabase()
-        const postToDeleteDB = await postDatabase.findProductById(idToDelete)
+        const postToDeleteDB = await this.postDatabase.findPostById(idToDelete)
 
         if (!postToDeleteDB) {
-            throw new Error("'id' para deletar não existe")
+            throw new NotFoundError("'id' para deletar não existe")
         }
 
-        await postDatabase.deletePostById(postToDeleteDB.id)
+        await this.postDatabase.deletePostById(postToDeleteDB.id)
 
         const output = {
             message: "Post deletado com sucesso"
