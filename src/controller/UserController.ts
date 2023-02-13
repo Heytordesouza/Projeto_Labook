@@ -12,11 +12,10 @@ export class UserController {
     private userBusiness: UserBusiness
 ){}
 
-    createUser = async (req: Request, res: Response) => {
+    public createUser = async (req: Request, res: Response) => {
       try {
 
         const input = this.userDTO.createUserInput(
-          req.body.id,
           req.body.name, 
           req.body.email, 
           req.body.password
@@ -36,25 +35,13 @@ export class UserController {
       }
     }
 
-    getUser = async (req: Request, res: Response) => {
+    public getAllUsers = async (req: Request, res: Response) => {
         try {
           const name = req.query.name as string | undefined
     
-          const usersDB: UserDB[] = await new UserDatabase().findUser(name)
+          const output = await this.userBusiness.getAllUsers(name)
     
-          //Estabelecimento do MAP sempre para termos certeza de como os dados precisam ser retornados, os motivos para fazermos isso são vários, mas em geral é porque nunca teremos certeza de como estão nossos dados no DB, uma vez que alguém possa ter acesso e manipular manualmente um dado. Sem essa trativa, infelizmente você vai se deparar com muitas quebras do fluxo no endpoint.
-          const users: Users[] = usersDB.map((element) =>
-              new Users(
-                element.id,
-                element.name,
-                element.email,
-                element.password,
-                element.role,
-                element.created_at
-              )
-          )
-    
-          res.status(200).send(users)
+          res.status(200).send(output)
         } catch (error) {
           console.log(error)
 
@@ -66,17 +53,16 @@ export class UserController {
         }
     }
 
-    loginUser = async (req: Request, res: Response) => {
+    public loginUser = async (req: Request, res: Response) => {
         try {
           const input = this.userDTO.loginUserInput(
-            req.body.id,
-            req.body.email, 
-            req.body.password
+            req.body.email,
+            req.body.password 
           )
   
           const output = await this.userBusiness.loginUser(input)
     
-          res.status(201).send({output, token: "um token jwt"})
+          res.status(200).send({output, token: "um token jwt"})
         } catch (error) {
           console.log(error)
 

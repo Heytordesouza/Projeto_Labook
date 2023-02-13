@@ -31,8 +31,12 @@ export class PostController {
         try {
 
             const input = this.postDTO.createPostInput(req.body.content)
+            const user = {
+                id: req.body.creatorId as string, 
+                name: req.body.name as string
+            }    
 
-            const output = await this.postBusiness.createPost(input)
+            const output = await this.postBusiness.createPost(input, user)
 
             res.status(201).send({output, token: "um token jwt"})
         } catch (error) {

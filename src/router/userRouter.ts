@@ -17,4 +17,4 @@ const userController = new UserController(
 
 userRouter.post("/signup", userController.createUser)
 userRouter.post("/login", userController.loginUser)
-userRouter.get("/", userController.getUser)
+userRouter.get("/", userController.getAllUsers)
