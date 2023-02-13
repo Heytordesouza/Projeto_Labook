@@ -1,63 +1,71 @@
 import { PostDatabase } from "../database/PostDatabase"
-import { PostDTO } from "../dtos/PostDTO"
+import { UserDatabase } from "../database/UserDatabase"
+import { CreatePostOutputDTO, PostDTO } from "../dtos/PostDTO"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Posts } from "../models/Posts"
-import { PostDB } from "../types"
+import { PostDB, PostEditDB } from "../types"
 
 export class PostBusiness {
     constructor(
         private postDTO: PostDTO,
-        private postDatabase: PostDatabase
+        private postDatabase: PostDatabase,
+        private userDatabase: UserDatabase,
       ){}
+
     public getPost = async (input: any) => {
 
-        
-        // const postDatabase = new PostDatabase()
-        const postsDB: PostDB[] = await this.postDatabase.findPost(input)
+        let postsDB
 
-        const posts: Posts[] = postsDB.map((postDB) => 
-            new Posts(
+        if (!input) {
+            const posts: PostDB[] = await this.postDatabase.getAllPosts()
+            postsDB = posts
+        } else {
+            const posts: PostDB[] = await this.postDatabase.getPostByUserId(input)
+            postsDB = posts
+        }
+        const users = await this.userDatabase.getAllUsers()
+
+        const posts = postsDB.map((postDB) => {
+            const userFind = users.find((user) => user.id === postDB.creator_id)
+            if (!userFind) {
+                throw new Error("Usuario não encontrado");
+            }
+            const user = {
+                id: userFind.id,
+                name: userFind.name
+            }
+        
+            const post = new Posts(
                 postDB.id,
-                postDB.creator_id,
                 postDB.content,
                 postDB.likes,
                 postDB.dislikes,
                 postDB.created_at,
-                postDB.updated_at
-            ))
-        return posts
+                postDB.updated_at,
+                user
+            )
+            return post
+        })
+        const output = this.postDTO.GetPostOutputDTO(posts)
+
+        return output
     }
 
-    public createPost = async (input: any) => {
+    public createPost = async (content: string, user: { id: string, name: string }): Promise<CreatePostOutputDTO> => {
 
-        const {content} = input
-
-        const lista = ['u001', 'u002', 'u003']
-        const creator_id = lista[Math.floor(Math.random() * lista.length)]
-
-        //Instanciando a classe User, porém passando os valores vindo das requisições e armazenando na variável userInstance.
         const postInstance = new Posts(
         Math.floor(Date.now() * Math.random()).toString(3),
-        creator_id,
         content,
-        Math.floor(Math.random() * 100),
-        Math.floor(Math.random() * 100),
+        0,
+        0,
         new Date().toISOString(),
-        new Date().toISOString()
+        new Date().toISOString(),
+        user
         )
 
-        //Para demonstrar a criação do usuário, precisamos acessar os valores que estão na classe, porém para acessar os valores na classe só será possível através dos métodos.
-        const newPostDB: PostDB = {
-        id: postInstance.getId(),
-        creator_id: postInstance.getCreator_id(),
-        content: postInstance.getContent(),
-        likes: postInstance.getLikes(),
-        dislikes: postInstance.getDislikes(),
-        created_at: postInstance.getCreated_at(),
-        updated_at: postInstance.getUpdated_at()
-        }
+        const postDB = postInstance.toPostDatabase()
 
-        await this.postDatabase.insertPost(newPostDB)
+        await this.postDatabase.insertPost(postDB)
 
         const output = this.postDTO.createPostOutput(postInstance)
 
@@ -78,33 +86,33 @@ export class PostBusiness {
             throw new NotFoundError("'id' para editar não existe")
         }
 
-        const post = new Posts(
+        const user = await this.userDatabase.findUserById(postToEditDB.creator_id)
+        if (!user) {
+            throw new NotFoundError("Erro ao procurar Id do criador do post")
+        }
+
+        const postEdit = new Posts(
            postToEditDB.id,
-           postToEditDB.creator_id,
            postToEditDB.content,
            postToEditDB.likes,
            postToEditDB.dislikes,
            postToEditDB.created_at,
-           postToEditDB.updated_at
+           postToEditDB.updated_at,
+           user
         )
 
         // newId && post.setId(newId)
-        newContent && post.setContent(newContent)
-        post.setUpdated_at(new Date().toISOString())
+        postEdit.setContent(newContent)
+        postEdit.setUpdated_at(new Date().toISOString())
         
-        const updatedPostDB: PostDB = {
-            id: post.getId(),
-            creator_id: post.getCreator_id(),
-            content: post.getContent(),
-            likes: post.getLikes(),
-            dislikes: post.getDislikes(),
-            created_at: post.getCreated_at(),
-            updated_at: post.getUpdated_at()
+        const toEdit: PostEditDB = {
+            content: postEdit.getContent(),
+            updated_at: postEdit.getUpdated_at()
         }
 
-        await this.postDatabase.updatePost(updatedPostDB)
+        await this.postDatabase.updatePost(postEdit.getId(), toEdit)
 
-        const output = this.postDTO.editPostOutput(post)
+        const output = this.postDTO.editPostOutput(postEdit)
 
         return output
     }

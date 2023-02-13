@@ -1,8 +1,19 @@
 import { BadRequestError } from "../errors/BadRequestError"
 import { Users } from "../models/Users"
+import { Role, UserOutput } from "../types"
+
+export interface GetUsersOutputDTO{
+    message:string,
+    users:{
+        id:string,
+        name:string,
+        email:string,
+        role:Role,
+        created_at:string,
+    }[]
+}
 
 export interface CreateUserInputDTO {
-    id: string,
     name: string,
     email: string,
     password: string
@@ -14,13 +25,12 @@ export interface CreateUserOutputDTO {
         id: string,
         name: string,
         email: string,
-        password: string
-        createAt: string
+        role: Role,
+        created_at: string
     }
 }
 
 export interface LoginUserInputDTO {
-    id: string,
     email: string,
     password: string
 }
@@ -28,23 +38,30 @@ export interface LoginUserInputDTO {
 export interface LoginUserOutputDTO {
     message: string,
     user: {
-        id: string,
-        email: string,
-        password: string
+        id:string,
+        name:string
     }
 }
 
 
 export class UserDTO {
-    public createUserInput(
-        id: unknown,
+
+    public GetUsersOutputDTO = (users:Users[]) : GetUsersOutputDTO => {
+        const getUsers : UserOutput[]= 
+        users.map((user)=> user.getUserOutput())
+        const dto : GetUsersOutputDTO = {
+            message:"Resultado da pesquisa",
+            users: getUsers        
+        }
+
+        return dto
+    }
+
+    public createUserInput = (
         name: unknown,
         email: unknown,
         password: unknown
-    ): CreateUserInputDTO{
-        if (typeof id !== "string") {
-            throw new BadRequestError("'id' deve ser string")
-        }
+    ): CreateUserInputDTO => {
 
         if (typeof name !== "string") {
             throw new BadRequestError("'name' deve ser string")
@@ -59,7 +76,6 @@ export class UserDTO {
         }
           
         const dto: CreateUserInputDTO = {
-        id,
         name,
         email,
         password
@@ -69,28 +85,18 @@ export class UserDTO {
     }
 
 
-    public createUserOutput(user: Users): CreateUserOutputDTO{
+    public createUserOutput = (user: Users): CreateUserOutputDTO => {
         const dto: CreateUserOutputDTO = {
             message: "Usuário registrado com sucesso",
-            user: {
-                id: user.getId(),
-                name: user.getName(),
-                email: user.getEmail(),
-                password: user.getPassword(),
-                createAt: user.getCreated_at()
-            }
+            user: user.getUserOutput()
         }
         return dto
     }
 
-    public loginUserInput(
-        id: unknown,
+    public loginUserInput = (
         email: unknown,
         password: unknown
-    ): LoginUserInputDTO{
-        if (typeof id !== "string") {
-            throw new BadRequestError("'id' deve ser string")
-        }
+    ): LoginUserInputDTO => {
 
         if (typeof email !== "string") {
             throw new BadRequestError("'email' deve ser string")
@@ -101,7 +107,6 @@ export class UserDTO {
         }
         
         const dto: LoginUserInputDTO = {
-        id,
         email,
         password
         }
@@ -110,13 +115,12 @@ export class UserDTO {
 
     }
 
-    public loginUserOutput(user: Users): LoginUserOutputDTO{
+    public loginUserOutput = (user: Users): LoginUserOutputDTO => {
         const dto: LoginUserOutputDTO = {
             message: "Usuário registrado com sucesso",
             user: {
                 id: user.getId(),
-                email: user.getEmail(),
-                password: user.getPassword(),
+                name: user.getName(),
             }
         }
         return dto

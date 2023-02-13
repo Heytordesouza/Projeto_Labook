@@ -1,21 +1,27 @@
 import { BadRequestError } from "../errors/BadRequestError"
 import { Posts } from "../models/Posts"
 
+
+export interface PostsOutputDTO{
+    id:string,
+    content:string,
+    likes:number,
+    dislikes:number,
+    createdAt:string,
+    updatedAt:string,
+    creator:{
+        id:string,
+        name:string
+    }
+}
+
 export interface CreatePostInputDTO {
     content: string,
 }
 
 export interface CreatePostOutputDTO {
     message: string,
-    post: {
-        id: string,
-        creator_id: string,
-        content: string,
-        likes: number,
-        dislikes: number,
-        created_at: string,
-        updated_at: string
-    }
+    post: PostsOutputDTO
 }
 
 export interface EditPostInputDTO {
@@ -25,48 +31,31 @@ export interface EditPostInputDTO {
 
 export interface EditPostOutputDTO {
     message: string,
-    post: {
-        id: string,
-        creator_id: string,
-        content: string,
-        likes: number,
-        dislikes: number,
-        created_at: string,
-        updated_at: string
-    }
+    post: PostsOutputDTO
 }
 
 
 
 
 export class PostDTO {
-    
-    public createPostInput(
-        content: unknown,
-    ): CreatePostInputDTO{
-        if (typeof content !== "string") {
-            throw new BadRequestError("'id' deve ser string")
-        }
-          
-        const dto: CreatePostInputDTO = {
-        content
-        }
 
+    public GetPostOutputDTO = (posts:Posts[]): PostsOutputDTO[] =>{
+        const dto:PostsOutputDTO[] = posts.map((post)=>post.toPostOutput())
         return dto
     }
+    
+    public createPostInput = (content: unknown): string => {
+        if (typeof content!== "string") {
+            throw new BadRequestError("'content' deve ser string")
+        }
 
-    public createPostOutput(post: Posts): CreatePostOutputDTO{
+        return content
+    }
+
+    public createPostOutput = (post: Posts): CreatePostOutputDTO => {
         const dto: CreatePostOutputDTO = {
             message: "Post registrado com sucesso",
-            post: {
-                id: post.getId(),
-                creator_id: post.getCreator_id(),
-                content: post.getContent(),
-                likes: post.getLikes(),
-                dislikes: post.getDislikes(),
-                created_at: post.getCreated_at(),
-                updated_at: post.getUpdated_at()
-            }
+            post: post.toPostOutput()
         }
         return dto
     }
@@ -94,15 +83,7 @@ export class PostDTO {
     public editPostOutput(post: Posts): EditPostOutputDTO{
         const dto: EditPostOutputDTO = {
             message: "Post editado com sucesso",
-            post: {
-                id: post.getId(),
-                creator_id: post.getCreator_id(),
-                content: post.getContent(),
-                likes: post.getLikes(),
-                dislikes: post.getDislikes(),
-                created_at: post.getCreated_at(),
-                updated_at: post.getUpdated_at()
-            }
+            post: post.toPostOutput()
         }
         return dto
     }

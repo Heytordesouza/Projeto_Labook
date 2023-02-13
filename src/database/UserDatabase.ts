@@ -5,6 +5,12 @@ import { UserDB, PostDB, Likes_dislikesDB } from "../types"
 export class UserDatabase extends BaseDatabase {
     static TABLE_USERS = "users"
 
+    public getAllUsers = async (): Promise <UserDB[]> => {
+        const result: UserDB[] = await BaseDatabase
+        .connection(UserDatabase.TABLE_USERS)
+        return result
+    }
+
     private async checkUser(id: string | undefined, email: string | undefined): Promise <void> {
     
         if (id) {
@@ -28,13 +34,13 @@ export class UserDatabase extends BaseDatabase {
         }
     }
 
-    async insertUser(newUserDB: UserDB): Promise <void> {
+    public insertUser = async (newUserDB: UserDB): Promise <void> => {
         await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
         .insert(newUserDB)
     }
 
-    async findUser(parameter: string | undefined): Promise <UserDB[]> {
+    public findUser = async (parameter: string | undefined): Promise <UserDB[]> => {
         let result
     
         if (parameter) {
@@ -53,11 +59,18 @@ export class UserDatabase extends BaseDatabase {
         return result
     }
 
-    public async findUserById(id: string) {
+    public findUserById = async (id: string) :Promise<UserDB| undefined>=> {
         const [ userDB ]: UserDB[] | undefined[] = await BaseDatabase
             .connection(UserDatabase.TABLE_USERS)
             .where({ id })
 
         return userDB
+    }
+
+    public getUserByEmail = async (email: string): Promise<UserDB | undefined> => {
+        const [result]: UserDB[] = await BaseDatabase
+            .connection(UserDatabase.TABLE_USERS)
+            .where({ email })
+        return result
     }
 }

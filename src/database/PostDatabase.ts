@@ -1,11 +1,26 @@
 import { BaseDatabase } from "./BaseDatabase"
 import { Posts } from "../models/Posts"
-import { PostDB } from "../types"
+import { PostDB, PostEditDB } from "../types"
 
 export class PostDatabase extends BaseDatabase {
     static TABLE_POSTS = "posts"
 
-    public async findPostById(id: string) {
+    public getAllPosts = async ():Promise<PostDB[]> =>{
+        
+        return await BaseDatabase
+        .connection(PostDatabase.TABLE_POSTS)
+
+    }
+
+    public getPostByUserId = async (userId:string) :Promise<PostDB[]>=> {
+
+        return await BaseDatabase
+        .connection(PostDatabase.TABLE_POSTS)
+        .where({creator_id:userId})
+        
+    }
+
+    public findPostById = async (id: string): Promise<PostDB | undefined> => {
         const [ postDB ]: PostDB[] | undefined[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .where({ id })
@@ -13,13 +28,13 @@ export class PostDatabase extends BaseDatabase {
         return postDB
     }
 
-    async insertPost(newPostDB: PostDB): Promise <void> {
+    public insertPost = async (newPostDB: PostDB): Promise <void> => {
         await BaseDatabase
         .connection(PostDatabase.TABLE_POSTS)
         .insert(newPostDB)
     }
 
-    async findPost(parameter: string | undefined): Promise <PostDB[]> {
+    public findPost = async (parameter: string | undefined): Promise <PostDB[]> => {
         let result
     
         if (parameter) {
@@ -38,14 +53,14 @@ export class PostDatabase extends BaseDatabase {
         return result
     }
 
-    public async updatePost(updatedPostDB: PostDB) {
+    public updatePost = async (id:string, toEdit:PostEditDB) => {
         await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
-            .update(updatedPostDB)
-            .where({ id: updatedPostDB.id })
+            .update(toEdit)
+            .where({id})
     }
 
-    public async deletePostById(id: string) {
+    public deletePostById = async (id: string) :Promise<void> => {
         await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
             .delete()
