@@ -15,13 +15,13 @@ export class UserController {
     public createUser = async (req: Request, res: Response) => {
       try {
 
-        const input = this.userDTO.createUserInput(
+        const input = this.userDTO.signupUserInput(
           req.body.name, 
           req.body.email, 
           req.body.password
         )
 
-        const output = await this.userBusiness.createUser(input)
+        const output = await this.userBusiness.signupUser(input)
         
         res.status(201).send({output, token: "um token jwt"})
       } catch (error) {
@@ -62,7 +62,7 @@ export class UserController {
   
           const output = await this.userBusiness.loginUser(input)
     
-          res.status(200).send({output, token: "um token jwt"})
+          res.status(200).send(output)
         } catch (error) {
           console.log(error)
 

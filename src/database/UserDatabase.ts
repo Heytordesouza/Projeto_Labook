@@ -40,13 +40,13 @@ export class UserDatabase extends BaseDatabase {
         .insert(newUserDB)
     }
 
-    public findUser = async (parameter: string | undefined): Promise <UserDB[]> => {
+    public findUser = async (name: string | undefined): Promise <UserDB[]> => {
         let result
     
-        if (parameter) {
+        if (name) {
           const usersDB: UserDB[] = await BaseDatabase
           .connection(UserDatabase.TABLE_USERS)
-          .where("name", "LIKE", `%${parameter}%`)
+          .where("name", "LIKE", `%${name}%`)
     
           result = usersDB
     

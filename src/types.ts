@@ -1,14 +1,11 @@
-export enum Role {
-    ADMIN = "ADMIN",
-    USER = "USER"
-};
+import { USER_ROLES } from "./services/TokenManager"
 
 export interface UserDB {
     id: string,
     name: string,
     email: string,
     password: string,
-    role: Role,
+    role: USER_ROLES,
     created_at: string
 };
 
@@ -39,7 +36,7 @@ export interface UserOutput{
     id:string,
     name:string,
     email:string,
-    role:Role,
+    role:USER_ROLES,
     created_at:string,
 }
 

@@ -1,4 +1,5 @@
-import { Role, UserDB, UserOutput } from "../types"
+import { USER_ROLES } from "../services/TokenManager"
+import { UserDB, UserOutput } from "../types"
 
 export class Users{
     constructor(
@@ -6,7 +7,7 @@ export class Users{
         private name:string,
         private email:string,
         private password:string,
-        private role:Role,
+        private role:USER_ROLES,
         private created_at:string
     ){}
 
@@ -43,11 +44,11 @@ export class Users{
         this.password = newPassword
     }
 
-    public getRole(): string {
+    public getRole(): USER_ROLES {
         return this.role
     }
 
-    public setRole(newRole: Role): void{
+    public setRole(newRole: USER_ROLES): void{
         this.role = newRole
     }
 
