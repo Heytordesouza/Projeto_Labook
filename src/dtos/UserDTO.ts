@@ -1,6 +1,7 @@
 import { BadRequestError } from "../errors/BadRequestError"
 import { Users } from "../models/Users"
-import { Role, UserOutput } from "../types"
+import { USER_ROLES } from "../services/TokenManager"
+import { UserOutput } from "../types"
 
 export interface GetUsersOutputDTO{
     message:string,
@@ -8,26 +9,20 @@ export interface GetUsersOutputDTO{
         id:string,
         name:string,
         email:string,
-        role:Role,
+        role:USER_ROLES,
         created_at:string,
     }[]
 }
 
-export interface CreateUserInputDTO {
+export interface SignupUserInputDTO {
     name: string,
     email: string,
     password: string
 }
 
-export interface CreateUserOutputDTO {
+export interface SignupUserOutputDTO {
     message: string,
-    user: {
-        id: string,
-        name: string,
-        email: string,
-        role: Role,
-        created_at: string
-    }
+    token: string
 }
 
 export interface LoginUserInputDTO {
@@ -37,16 +32,13 @@ export interface LoginUserInputDTO {
 
 export interface LoginUserOutputDTO {
     message: string,
-    user: {
-        id:string,
-        name:string
-    }
+    token: string
 }
 
 
 export class UserDTO {
 
-    public GetUsersOutputDTO = (users:Users[]) : GetUsersOutputDTO => {
+    public getUsersOutputDTO = (users:Users[]) : GetUsersOutputDTO => {
         const getUsers : UserOutput[]= 
         users.map((user)=> user.getUserOutput())
         const dto : GetUsersOutputDTO = {
@@ -57,11 +49,11 @@ export class UserDTO {
         return dto
     }
 
-    public createUserInput = (
+    public signupUserInput = (
         name: unknown,
         email: unknown,
         password: unknown
-    ): CreateUserInputDTO => {
+    ): SignupUserInputDTO => {
 
         if (typeof name !== "string") {
             throw new BadRequestError("'name' deve ser string")
@@ -75,7 +67,7 @@ export class UserDTO {
             throw new BadRequestError("'password' deve ser string")
         }
           
-        const dto: CreateUserInputDTO = {
+        const dto: SignupUserInputDTO = {
         name,
         email,
         password
@@ -85,13 +77,23 @@ export class UserDTO {
     }
 
 
-    public createUserOutput = (user: Users): CreateUserOutputDTO => {
-        const dto: CreateUserOutputDTO = {
-            message: "Usuário registrado com sucesso",
-            user: user.getUserOutput()
-        }
-        return dto
-    }
+    // public signupUserOutput = (user: Users): SignupUserOutputDTO => {
+    //     //criar token
+    //     const tokenPayload: TokenPayload ={
+    //         id: newUser.getId(),
+    //         name: newUser.getName(),
+    //         role: newUser.getRole()
+    //     }
+
+    //     const token = this.tokenManager.createToken(tokenPayload)
+    //     //
+
+    //     const output: SignupOutput = {
+    //         message: "Cadastro realizado com sucesso",
+    //         token: token
+    //     }
+    //     return dto
+    // }
 
     public loginUserInput = (
         email: unknown,
@@ -115,14 +117,14 @@ export class UserDTO {
 
     }
 
-    public loginUserOutput = (user: Users): LoginUserOutputDTO => {
-        const dto: LoginUserOutputDTO = {
-            message: "Usuário registrado com sucesso",
-            user: {
-                id: user.getId(),
-                name: user.getName(),
-            }
-        }
-        return dto
-    }
+    // public loginUserOutput = (user: Users): LoginUserOutputDTO => {
+    //     const dto: LoginUserOutputDTO = {
+    //         message: "Usuário registrado com sucesso",
+    //         user: {
+    //             id: user.getId(),
+    //             name: user.getName(),
+    //         }
+    //     }
+    //     return dto
+    // }
 }

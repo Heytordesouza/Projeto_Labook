@@ -1,20 +1,29 @@
 import { UserDatabase } from "../database/UserDatabase"
-import { GetUsersOutputDTO, UserDTO } from "../dtos/UserDTO"
+import { GetUsersOutputDTO, LoginUserOutputDTO, SignupUserInputDTO, SignupUserOutputDTO, UserDTO } from "../dtos/UserDTO"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Users } from "../models/Users"
-import { Role, UserDB } from "../types"
+import { IdGenerator } from "../services/idGenerator"
+import { TokenManager, TokenPayload, USER_ROLES } from "../services/TokenManager"
+import { UserDB } from "../types"
 
 export class UserBusiness {
   constructor(
     private userDTO: UserDTO,
-    private userDatabase: UserDatabase
+    private userDatabase: UserDatabase,
+    private idGenerator: IdGenerator,
+    private tokenManager: TokenManager
   ){}
 
 
   public getAllUsers = async (name:string | undefined): Promise<GetUsersOutputDTO> =>{
-     
-    const usersDB:UserDB[] = await this.userDatabase.getAllUsers()
+    
+    if (typeof name !== "string" && name !== undefined) {
+      throw new BadRequestError("'name' deve ser string ou undefined")
+    }
+
+    const usersDB:UserDB[] = await this.userDatabase.findUser(name)
+
     const users: Users[] = usersDB.map((user)=>{
         return new Users(
             user.id,
@@ -26,37 +35,50 @@ export class UserBusiness {
         )
     })
     
-    const output = this.userDTO.GetUsersOutputDTO(users)
+    const output = this.userDTO.getUsersOutputDTO(users)
 
     return output
   }
 
-  public createUser = async (input: any) => {
+  public signupUser = async (input: SignupUserInputDTO): Promise<SignupUserOutputDTO> => {
 
     const {
       name, 
       email, 
       password} = input
 
-      const userVerification = await this.userDatabase.getUserByEmail(email)
-        if(userVerification){
-          throw new BadRequestError("Email ja cadastrado")
-      }
+    const userVerification = await this.userDatabase.getUserByEmail(email)
+      if(userVerification){
+        throw new BadRequestError("Email ja cadastrado")
+    }
 
-      const userInstance = new Users(
-        Math.floor(Date.now() * Math.random()).toString(3),
-        name,
-        email,
-        password,
-        Role.USER,
-        new Date().toISOString()
-      )
+    const id = this.idGenerator.generate()
+
+    const userInstance = new Users(
+      id,
+      name,
+      email,
+      password,
+      USER_ROLES.NORMAL,
+      new Date().toISOString()
+    )
   
-      await this.userDatabase.insertUser(userInstance.userToDatabase())
+    await this.userDatabase.insertUser(userInstance.userToDatabase())
 
-      const output = this.userDTO.createUserOutput(userInstance)
+    const tokenPayload: TokenPayload ={
+      id: userInstance.getId(),
+      name: userInstance.getName(),
+      role: userInstance.getRole()
+    }
 
-      return(output)
+    const token = this.tokenManager.createToken(tokenPayload)
+
+    const output: SignupUserOutputDTO = {
+        message: "Cadastro realizado com sucesso",
+        token: token
+    }
+
+    return(output)
   }
 
   public loginUser = async (input: any) => {
@@ -67,23 +89,25 @@ export class UserBusiness {
 
     const user = await this.userDatabase.getUserByEmail(email)
       if(!user){
-        throw new NotFoundError("Usuario não encontrado")
+        throw new NotFoundError("Usuário não encontrado")
       }
 
       if(password!==user.password){
          throw new NotFoundError("Senha incorreta")
       }
 
-    const userLogin = new Users(
-      user.id,
-      user.name,
-      user.email,
-      user.password,
-      user.role,
-      user.created_at,
-    )
-  
-    const output = this.userDTO.loginUserOutput(userLogin)
+    const tokenPayload: TokenPayload ={
+      id: user.id,
+      name: user.name,
+      role: user.role
+    }
+
+    const token = this.tokenManager.createToken(tokenPayload)
+
+    const output: LoginUserOutputDTO = {
+        message: "Login realizado com sucesso",
+        token: token
+    }
 
     return(output)
   }
