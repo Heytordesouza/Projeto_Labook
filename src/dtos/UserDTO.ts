@@ -3,12 +3,16 @@ import { Users } from "../models/Users"
 import { USER_ROLES } from "../services/TokenManager"
 import { UserOutput } from "../types"
 
+
+
+
 export interface GetUsersOutputDTO{
     message:string,
     users:{
         id:string,
         name:string,
         email:string,
+        password: string,
         role:USER_ROLES,
         created_at:string,
     }[]

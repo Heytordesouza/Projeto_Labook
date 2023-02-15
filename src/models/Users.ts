@@ -65,6 +65,7 @@ export class Users{
         id:this.id,
         name:this.name,
         email:this.email,
+        password:this.password,
         role:this.role,
         created_at:this.created_at,
         }

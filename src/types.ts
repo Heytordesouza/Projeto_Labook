@@ -36,6 +36,7 @@ export interface UserOutput{
     id:string,
     name:string,
     email:string,
+    password: string,
     role:USER_ROLES,
     created_at:string,
 }

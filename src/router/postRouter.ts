@@ -4,6 +4,8 @@ import { PostController } from "../controller/PostController"
 import { PostDatabase } from "../database/PostDatabase"
 import { UserDatabase } from "../database/UserDatabase"
 import { PostDTO } from "../dtos/PostDTO"
+import { IdGenerator } from "../services/idGenerator"
+import { TokenManager } from "../services/TokenManager"
 
 export const postRouter = express.Router()
 
@@ -12,7 +14,9 @@ const postController = new PostController(
     new PostBusiness(
         new PostDTO(),
         new PostDatabase(),
-        new UserDatabase()
+        new UserDatabase(),
+        new TokenManager(),
+        new IdGenerator()
     )
 )
 
