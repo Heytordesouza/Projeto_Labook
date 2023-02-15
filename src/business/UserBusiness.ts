@@ -3,6 +3,7 @@ import { GetUsersOutputDTO, LoginUserOutputDTO, SignupUserInputDTO, SignupUserOu
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Users } from "../models/Users"
+import { HashManager } from "../services/HashManager"
 import { IdGenerator } from "../services/idGenerator"
 import { TokenManager, TokenPayload, USER_ROLES } from "../services/TokenManager"
 import { UserDB } from "../types"
@@ -12,7 +13,8 @@ export class UserBusiness {
     private userDTO: UserDTO,
     private userDatabase: UserDatabase,
     private idGenerator: IdGenerator,
-    private tokenManager: TokenManager
+    private tokenManager: TokenManager,
+    private hashManager: HashManager
   ){}
 
 
@@ -54,11 +56,13 @@ export class UserBusiness {
 
     const id = this.idGenerator.generate()
 
+    const passwordHash = await this.hashManager.hash(password)
+
     const userInstance = new Users(
       id,
       name,
       email,
-      password,
+      passwordHash,
       USER_ROLES.NORMAL,
       new Date().toISOString()
     )
@@ -88,13 +92,16 @@ export class UserBusiness {
       password} = input
 
     const user = await this.userDatabase.getUserByEmail(email)
-      if(!user){
-        throw new NotFoundError("Usuário não encontrado")
-      }
 
-      if(password!==user.password){
-         throw new NotFoundError("Senha incorreta")
-      }
+    if(!user){
+      throw new NotFoundError("Usuário não encontrado")
+    }
+
+    const passwordHash = await this.hashManager.compare(password, user.password)
+
+    if(!passwordHash){
+      throw new BadRequestError("'email' ou 'password' incorretos")
+    }
 
     const tokenPayload: TokenPayload ={
       id: user.id,

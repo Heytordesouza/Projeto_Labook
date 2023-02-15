@@ -1,6 +1,10 @@
 import { BadRequestError } from "../errors/BadRequestError"
 import { Posts } from "../models/Posts"
 
+export interface GetPostsInput {
+    q: unknown,
+    token: string | undefined
+}
 
 export interface PostsOutputDTO{
     id:string,
@@ -15,8 +19,9 @@ export interface PostsOutputDTO{
     }
 }
 
-export interface CreatePostInputDTO {
-    content: string,
+export interface CreatePostInput {
+    token: string | undefined
+    content: string
 }
 
 export interface CreatePostOutputDTO {
@@ -26,6 +31,7 @@ export interface CreatePostOutputDTO {
 
 export interface EditPostInputDTO {
     idToEdit: string,
+    token: string | undefined,
     newContent: string,
 }
 
@@ -44,13 +50,13 @@ export class PostDTO {
         return dto
     }
     
-    public createPostInput = (content: unknown): string => {
-        if (typeof content!== "string") {
-            throw new BadRequestError("'content' deve ser string")
-        }
+    // public createPostInput = (content: unknown): string => {
+    //     if (typeof content!== "string") {
+    //         throw new BadRequestError("'content' deve ser string")
+    //     }
 
-        return content
-    }
+    //     return content
+    // }
 
     public createPostOutput = (post: Posts): CreatePostOutputDTO => {
         const dto: CreatePostOutputDTO = {
@@ -62,10 +68,15 @@ export class PostDTO {
 
     public editProductInput(
         idToEdit: string,
+        token: string | undefined,
         newContent: unknown
     ){
         if (typeof idToEdit !== "string") {
             throw new BadRequestError("'Id' deve ser string")
+        }
+
+        if (typeof token !== "string") {
+            throw new BadRequestError("'token' deve ser string")
         }
 
         if (typeof newContent !== "string") {
@@ -74,6 +85,7 @@ export class PostDTO {
 
         const dto: EditPostInputDTO ={
             idToEdit,
+            token,
             newContent
         }
 
