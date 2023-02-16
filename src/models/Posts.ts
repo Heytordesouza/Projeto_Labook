@@ -9,14 +9,12 @@ export class Posts{
         private dislikes:number,
         private created_at:string,
         private updated_at:string,
-        private creator:{
-            id:string,
-            name:string
-        }
+        private creatorId: string,
+        private creatorName: string
     ){}
 
 
-    public getId(){
+    public getId(): string {
         return this.id
     }
 
@@ -24,7 +22,7 @@ export class Posts{
         this.id = newId
     }
 
-    public getContent(){
+    public getContent(): string {
         return this.content
     }
 
@@ -32,7 +30,7 @@ export class Posts{
         this.content = newContent
     }
 
-    public getLikes(){
+    public getLikes(): number {
         return this.likes
     }
 
@@ -40,12 +38,28 @@ export class Posts{
         this.likes = newLikes
     }
 
-    public getDislikes(){
+    public addLike() {
+        this.likes += 1
+    }
+
+    public removeLike() {
+        this.likes -= 1
+    }
+
+    public addDislike() {
+        this.dislikes += 1
+    }
+
+    public removeDislike() {
+        this.dislikes -= 1
+    }
+
+    public getDislikes(): number {
         return this.dislikes
     }
 
-    public setDislikes(newDislikes:number): void{
-        this.dislikes = newDislikes
+    public setDislikes(value: number): void {
+        this.dislikes = value
     }
 
     public getCreated_at(){
@@ -64,14 +78,26 @@ export class Posts{
         this.updated_at = newUpdated_at
     }
 
-    public getCreator():{id:string,name:string}{
-        return this.creator
+    public getCreatorId(): string {
+        return this.creatorId
+    }
+
+    public setCreatorId(value: string): void {
+        this.creatorId = value
+    }
+
+    public getCreatorName(): string {
+        return this.creatorName
+    }
+
+    public setCreatorName(value: string): void {
+        this.creatorName = value
     }
 
     public toPostDatabase (): PostDB {
         return{
             id:this.id,
-            creator_id:this.creator.id,
+            creator_id:this.creatorId,
             content:this.content,
             likes:this.likes,
             dislikes:this.dislikes,
@@ -88,8 +114,8 @@ export class Posts{
             createdAt:this.created_at,
             updatedAt:this.updated_at,
             creator:{
-                id:this.creator.id,
-                name:this.creator.name
+                id:this.creatorId,
+                name:this.creatorName
             }
         }
     }

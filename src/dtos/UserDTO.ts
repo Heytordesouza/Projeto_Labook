@@ -40,6 +40,7 @@ export interface LoginUserOutputDTO {
 }
 
 
+
 export class UserDTO {
 
     public getUsersOutputDTO = (users:Users[]) : GetUsersOutputDTO => {
