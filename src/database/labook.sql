@@ -17,14 +17,20 @@ CREATE TABLE posts (
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     FOREIGN KEY (creator_id) REFERENCES users (id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 CREATE TABLE likes_dislikes(
     user_id TEXT NOT NULL,
     post_id TEXT NOT NULL,
     like INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
     FOREIGN KEY (post_id) REFERENCES posts (id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
 );
 
 INSERT INTO users (id, name, email, password, role, created_at)
@@ -63,3 +69,7 @@ SELECT * FROM likes_dislikes;
 DROP TABLE users;
 DROP TABLE posts;
 DROP TABLE likes_dislikes;
+
+UPDATE posts
+SET Likes = 1
+WHERE id = "p002";

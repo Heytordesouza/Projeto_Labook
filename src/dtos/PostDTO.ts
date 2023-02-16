@@ -2,7 +2,6 @@ import { BadRequestError } from "../errors/BadRequestError"
 import { Posts } from "../models/Posts"
 
 export interface GetPostsInput {
-    q: unknown,
     token: string | undefined
 }
 
@@ -41,7 +40,11 @@ export interface EditPostOutputDTO {
 }
 
 
-
+export interface LikeOrDislikePostInputDTO{
+    idToLikeOrDislike: string,
+    token: string | undefined,
+    like: unknown
+}
 
 export class PostDTO {
 
