@@ -42,6 +42,8 @@ VALUES
     ("u005", "Severino", "severino@email.com", "severino123", "NORMAL", "2023-02-12T14:22:31.985Z"),
     ("u006", "Janaina", "janaina@email.com", "janaina123", "NORMAL", "2023-02-12T14:22:31.985Z");
 
+-- LOGO APÓS INSERIR OS "USERS", FAZER UPDATE DE CADA "USERS" NO ARQUIVO "atualizarHash.sql", 
+-- PARA ATUALIZAR AS SENHAS USANDO "hashes bcrypt".
 
 INSERT INTO posts (id, creator_id, content, created_at, updated_at)
 VALUES
@@ -51,7 +53,6 @@ VALUES
     ("p004", "u005", "Chega de pokemóns", "2023-02-12T14:22:35.985Z", "2023-02-12T14:22:35.985Z"),
     ("p005", "u006", "Flamengo melhor time", "2023-02-12T14:22:35.985Z", "2023-02-12T14:22:35.985Z"),
     ("p006", "u004", "Não sei o que escrever", "2023-02-12T14:22:35.985Z", "2023-02-12T14:22:35.985Z");
-
 
 INSERT INTO likes_dislikes (user_id, post_id, like)
 VALUES
@@ -69,7 +70,3 @@ SELECT * FROM likes_dislikes;
 DROP TABLE users;
 DROP TABLE posts;
 DROP TABLE likes_dislikes;
-
-UPDATE posts
-SET Likes = 1
-WHERE id = "p002";

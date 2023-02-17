@@ -3,11 +3,7 @@ import { Users } from "../models/Users"
 import { USER_ROLES } from "../services/TokenManager"
 import { UserOutput } from "../types"
 
-
-
-
 export interface GetUsersOutputDTO{
-    message:string,
     users:{
         id:string,
         name:string,
@@ -25,7 +21,6 @@ export interface SignupUserInputDTO {
 }
 
 export interface SignupUserOutputDTO {
-    message: string,
     token: string
 }
 
@@ -35,11 +30,8 @@ export interface LoginUserInputDTO {
 }
 
 export interface LoginUserOutputDTO {
-    message: string,
     token: string
 }
-
-
 
 export class UserDTO {
 
@@ -47,18 +39,13 @@ export class UserDTO {
         const getUsers : UserOutput[]= 
         users.map((user)=> user.getUserOutput())
         const dto : GetUsersOutputDTO = {
-            message:"Resultado da pesquisa",
             users: getUsers        
         }
 
         return dto
     }
 
-    public signupUserInput = (
-        name: unknown,
-        email: unknown,
-        password: unknown
-    ): SignupUserInputDTO => {
+    public signupUserInput = (name: unknown, email: unknown, password: unknown): SignupUserInputDTO => {
 
         if (typeof name !== "string") {
             throw new BadRequestError("'name' deve ser string")
@@ -81,29 +68,7 @@ export class UserDTO {
         return dto
     }
 
-
-    // public signupUserOutput = (user: Users): SignupUserOutputDTO => {
-    //     //criar token
-    //     const tokenPayload: TokenPayload ={
-    //         id: newUser.getId(),
-    //         name: newUser.getName(),
-    //         role: newUser.getRole()
-    //     }
-
-    //     const token = this.tokenManager.createToken(tokenPayload)
-    //     //
-
-    //     const output: SignupOutput = {
-    //         message: "Cadastro realizado com sucesso",
-    //         token: token
-    //     }
-    //     return dto
-    // }
-
-    public loginUserInput = (
-        email: unknown,
-        password: unknown
-    ): LoginUserInputDTO => {
+    public loginUserInput = (email: unknown, password: unknown): LoginUserInputDTO => {
 
         if (typeof email !== "string") {
             throw new BadRequestError("'email' deve ser string")
@@ -119,17 +84,5 @@ export class UserDTO {
         }
     
         return dto
-
     }
-
-    // public loginUserOutput = (user: Users): LoginUserOutputDTO => {
-    //     const dto: LoginUserOutputDTO = {
-    //         message: "Usuário registrado com sucesso",
-    //         user: {
-    //             id: user.getId(),
-    //             name: user.getName(),
-    //         }
-    //     }
-    //     return dto
-    // }
 }

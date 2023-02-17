@@ -1,5 +1,6 @@
 -- Active: 1675369654899@@127.0.0.1@3306
--- atualizar senhas para hashes bcrypt
+
+-- Atualizar senhas para hashes bcrypt
 
 UPDATE users
 SET 
@@ -7,7 +8,6 @@ SET
   id = "3304bc03-0efd-4d18-8e73-613f8234fede"
 WHERE name = "Fulano";
 -- plaintext = fulano123
-
 
 UPDATE users
 SET 

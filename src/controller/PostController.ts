@@ -32,15 +32,14 @@ export class PostController {
 
     public createPost = async (req: Request, res: Response) => {
         try {
-
             const input: CreatePostInput = {
                 token: req.headers.authorization,
                 content: req.body.content
             }
              
-            const output = await this.postBusiness.createPost(input)
+            await this.postBusiness.createPost(input)
 
-            res.status(201).send({output, token: "um token jwt"})
+            res.status(201).end()
         } catch (error) {
             console.log(error)
 
@@ -54,16 +53,15 @@ export class PostController {
 
     public editPost = async (req: Request, res: Response) => {
         try {
-
             const input = this.postDTO.editProductInput(
                 req.params.id,
                 req.headers.authorization,
                 req.body.content
             )
 
-            const output = await this.postBusiness.editPost(input)
+            await this.postBusiness.editPost(input)
 
-            res.status(200).send(output)
+            res.status(200).end()
         } catch (error) {
             console.log(error)
 
@@ -77,15 +75,14 @@ export class PostController {
 
     public deletePost = async (req: Request, res: Response) => {
         try {
-
             const input = {
                 idToDelete: req.params.id,
                 token: req.headers.authorization
             }
 
-            const output = await this.postBusiness.deletePost(input)
+            await this.postBusiness.deletePost(input)
 
-            res.status(200).send(output)
+            res.status(200).end()
         } catch (error) {
             console.log(error)
 
@@ -99,7 +96,6 @@ export class PostController {
 
     public LikeOrDislikePost = async (req: Request, res: Response) => {
         try {
-
             const input: LikeOrDislikePostInputDTO = {
                 idToLikeOrDislike: req.params.id,
                 token: req.headers.authorization,
@@ -118,6 +114,5 @@ export class PostController {
                 res.status(500).send("Erro inesperado")
             }
         } 
-    }
-    
+    }  
 }
