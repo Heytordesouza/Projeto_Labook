@@ -1,5 +1,4 @@
 import { BaseDatabase } from "./BaseDatabase"
-import { Posts } from "../models/Posts"
 import { LikeDislikeDB, PostDB, PostEditDB, PostWithCreatorDB, POST_LIKE} from "../types"
 
 export class PostDatabase extends BaseDatabase {
@@ -24,14 +23,6 @@ export class PostDatabase extends BaseDatabase {
         return result
     }
 
-    public getPostByUserId = async (userId:string) :Promise<PostDB[]>=> {
-
-        return await BaseDatabase
-        .connection(PostDatabase.TABLE_POSTS)
-        .where({creator_id:userId})
-        
-    }
-
     public findPostById = async (id: string): Promise<PostDB | undefined> => {
         const [ postDB ]: PostDB[] | undefined[] = await BaseDatabase
             .connection(PostDatabase.TABLE_POSTS)
@@ -44,25 +35,6 @@ export class PostDatabase extends BaseDatabase {
         await BaseDatabase
         .connection(PostDatabase.TABLE_POSTS)
         .insert(newPostDB)
-    }
-
-    public findPost = async (q: any): Promise <PostDB[]> => {
-        let result
-    
-        if (q) {
-          const postsDB: PostDB[] = await BaseDatabase
-          .connection(PostDatabase.TABLE_POSTS)
-          .where("id", "LIKE", `%${q}%`)
-    
-          result = postsDB
-    
-        } else {
-          const postsDB: PostDB[] = await BaseDatabase
-          .connection(PostDatabase.TABLE_POSTS)
-          result = postsDB
-        }
-    
-        return result
     }
 
     public updatePost = async (id:string, toEdit:PostEditDB) :Promise<void> => {

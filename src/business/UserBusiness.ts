@@ -43,15 +43,12 @@ export class UserBusiness {
   }
 
   public signupUser = async (input: SignupUserInputDTO): Promise<SignupUserOutputDTO> => {
-
-    const {
-      name, 
-      email, 
-      password} = input
+    const {name, email, password} = input
 
     const userVerification = await this.userDatabase.getUserByEmail(email)
+
       if(userVerification){
-        throw new BadRequestError("Email ja cadastrado")
+        throw new BadRequestError("'Email' já cadastrado")
     }
 
     const id = this.idGenerator.generate()
@@ -77,19 +74,13 @@ export class UserBusiness {
 
     const token = this.tokenManager.createToken(tokenPayload)
 
-    const output: SignupUserOutputDTO = {
-        message: "Cadastro realizado com sucesso",
-        token: token
-    }
+    const output: SignupUserOutputDTO = {token: token}
 
     return(output)
   }
 
   public loginUser = async (input: any) => {
-
-    const {
-      email, 
-      password} = input
+    const {email, password} = input
 
     const user = await this.userDatabase.getUserByEmail(email)
 
@@ -111,30 +102,8 @@ export class UserBusiness {
 
     const token = this.tokenManager.createToken(tokenPayload)
 
-    const output: LoginUserOutputDTO = {
-        message: "Login realizado com sucesso",
-        token: token
-    }
+    const output: LoginUserOutputDTO = {token: token}
 
     return(output)
-  }
-
-  public deleteUser = async (input: any) => {
-    const { id } = input
-
-    // const productDatabase = new ProductDatabase()
-    const userToDeleteDB = await this.userDatabase.findUserById(id)
-
-    if (!userToDeleteDB) {
-        throw new NotFoundError("'id' para deletar não existe")
-    }
-
-    await this.userDatabase.deleteUserById(userToDeleteDB.id)
-
-    const output = {
-        message: "Usuário deletado com sucesso"
-    }
-
-    return output
   }
 }
