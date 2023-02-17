@@ -73,4 +73,11 @@ export class UserDatabase extends BaseDatabase {
             .where({ email })
         return result
     }
+
+    public async deleteUserById(id: string) {
+        await BaseDatabase
+            .connection(UserDatabase.TABLE_USERS)
+            .delete()
+            .where({ id })
+    }
 }

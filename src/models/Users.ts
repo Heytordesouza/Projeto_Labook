@@ -52,11 +52,11 @@ export class Users{
         this.role = newRole
     }
 
-    public getCreated_at(): string{
+    public getCreatedAt(): string{
         return this.created_at
     }
 
-    public setCreated_at(newCreated_at:string): void{
+    public setCreatedAt(newCreated_at:string): void{
         this.created_at = newCreated_at
     }
 
@@ -67,7 +67,7 @@ export class Users{
         email:this.email,
         password:this.password,
         role:this.role,
-        created_at:this.created_at,
+        createdAt:this.created_at,
         }
     }
 
