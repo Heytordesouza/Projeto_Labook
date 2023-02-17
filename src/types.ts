@@ -47,7 +47,7 @@ export interface UserOutput{
     email:string,
     password: string,
     role:USER_ROLES,
-    created_at:string,
+    createdAt:string,
 }
 
 export interface PostEditDB{

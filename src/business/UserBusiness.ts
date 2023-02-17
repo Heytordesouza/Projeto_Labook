@@ -33,7 +33,7 @@ export class UserBusiness {
             user.email,
             user.password,
             user.role,
-            user.created_at,
+            user.created_at
         )
     })
     
@@ -117,5 +117,24 @@ export class UserBusiness {
     }
 
     return(output)
+  }
+
+  public deleteUser = async (input: any) => {
+    const { id } = input
+
+    // const productDatabase = new ProductDatabase()
+    const userToDeleteDB = await this.userDatabase.findUserById(id)
+
+    if (!userToDeleteDB) {
+        throw new NotFoundError("'id' para deletar não existe")
+    }
+
+    await this.userDatabase.deleteUserById(userToDeleteDB.id)
+
+    const output = {
+        message: "Usuário deletado com sucesso"
+    }
+
+    return output
   }
 }

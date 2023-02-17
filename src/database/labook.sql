@@ -35,12 +35,12 @@ CREATE TABLE likes_dislikes(
 
 INSERT INTO users (id, name, email, password, role, created_at)
 VALUES
-    ("u001", "Fulano", "fulano@email.com", "123456", "ADMIN", "2023-02-12T14:22:31.985Z"),
-    ("u002", "Sicrano", "sicrano@email.com", "123456", "NORMAL", "2023-02-12T14:22:31.985Z"),
-    ("u003", "Túlio", "tulio@email.com", "123456", "NORMAL", "2023-02-12T14:22:31.985Z"),
-    ("u004", "Francisca", "francisca@email.com", "123456", "ADMIN", "2023-02-12T14:22:31.985Z"),
-    ("u005", "Severino", "severino@email.com", "123456", "NORMAL", "2023-02-12T14:22:31.985Z"),
-    ("u006", "Janaina", "janaina@email.com", "123456", "NORMAL", "2023-02-12T14:22:31.985Z");
+    ("u001", "Fulano", "fulano@email.com", "fulano123", "ADMIN", "2023-02-12T14:22:31.985Z"),
+    ("u002", "Sicrano", "sicrano@email.com", "sicrano123", "NORMAL", "2023-02-12T14:22:31.985Z"),
+    ("u003", "Túlio", "tulio@email.com", "tulio123", "NORMAL", "2023-02-12T14:22:31.985Z"),
+    ("u004", "Francisca", "francisca@email.com", "francisca123", "ADMIN", "2023-02-12T14:22:31.985Z"),
+    ("u005", "Severino", "severino@email.com", "severino123", "NORMAL", "2023-02-12T14:22:31.985Z"),
+    ("u006", "Janaina", "janaina@email.com", "janaina123", "NORMAL", "2023-02-12T14:22:31.985Z");
 
 
 INSERT INTO posts (id, creator_id, content, created_at, updated_at)

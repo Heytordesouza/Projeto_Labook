@@ -6,7 +6,7 @@ import { NotFoundError } from "../errors/NotFoundError"
 import { Posts } from "../models/Posts"
 import { HashManager } from "../services/HashManager"
 import { IdGenerator } from "../services/idGenerator"
-import { TokenManager } from "../services/TokenManager"
+import { TokenManager, USER_ROLES } from "../services/TokenManager"
 import { LikeDislikeDB, PostDB, PostEditDB, POST_LIKE, PostWithCreatorDB } from "../types"
 
 export class PostBusiness {
@@ -159,18 +159,24 @@ export class PostBusiness {
             throw new NotFoundError("'id' para deletar não existe")
         }
 
-        const user = await this.userDatabase.findUserById(postToDeleteDB.creator_id)
-        if (!user) {
-            throw new NotFoundError("Erro ao procurar Id do criador do post")
-        }
+        // const user = await this.userDatabase.findUserById(postToDeleteDB.creator_id)
+        // if (!user) {
+        //     throw new NotFoundError("Erro ao procurar Id do criador do post")
+        // }
 
         const payload = this.tokenManager.getPayload(token)
+
         if(payload === null){
             throw new BadRequestError("'token' não é valido")
         }
 
-        if(payload.id !== user.id){
-            throw new BadRequestError("Somente o criador da postagem pode excluir")
+        const creatorId = payload.id
+
+        if (
+            payload.role !== USER_ROLES.ADMIN
+            && postToDeleteDB.creator_id !== creatorId
+        ) {
+            throw new BadRequestError("somente quem criou a playlist pode deletá-la")
         }
 
         await this.postDatabase.deletePostById(postToDeleteDB.id)
